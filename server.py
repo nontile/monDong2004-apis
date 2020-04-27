@@ -3,6 +3,7 @@ import config
 from flask import Flask
 from flask_restful import Api
 from project_repo.resource import ProjectRepo
+from samp_repo import Sample2Resource, SampleResource
 
 app = Flask(__name__)
 
@@ -15,21 +16,15 @@ elif mode == 'prd':
     app.config.from_object(config.ProductionConfig)
 else:
     raise ValueError('Invalid environment name')
-print(mode)
 
 
 api = Api(app)
-api.add_resource(ProjectRepo, '/p1')
-
-from flask_restful import Resource
-class Test(Resource):
-    def get(self, _id):
-        return {"test": _id}
-
-
-api.add_resource(Test, '/<string:_id>')
+api.add_resource(ProjectRepo, '/project')
+api.add_resource(SampleResource, '/')
+api.add_resource(Sample2Resource, '/user')
 
 if __name__ == '__main__':
     from init_db import db
     db.init_app(app)
+    print(mode)
     app.run(debug=True, host='0.0.0.0', port=8080)
